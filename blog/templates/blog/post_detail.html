@@ -1,0 +1,38 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+    <article class="media content-section clearfix">
+        <img src="{{ object.author.profile.image.url }}" class="rounded-circle article-img">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+                <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+                {% if object.author == user %}
+                   <div>
+                        <a href="{% url 'post-update' object.id %}" class="btn btn-secondary btn-sm mt-1 mb-1">Update</a>
+                        <a href="{% url 'post-delete' object.id %}" class="btn btn-danger btn-sm mt-1 mb-1">Delete</a>
+                   </div>
+                {% endif %}
+            </div>
+            <h2 class="article-title">{{ object.title }}</h2>
+            <p class="article-content">{{ object.content }}</p>
+        </div>
+        <div class="like-section">
+            <form action="{% url 'like-post' post.pk %}" method="post">
+                {% csrf_token %}
+                {% if user.is_authenticated %}
+                    {% if liked %}
+                        <button type="submit" name="post_id" style="border: none; background: none;" value="{{ post.id }}"><i class="far fa-thumbs-down fa-lg"></i></button>
+                        -&nbsp&nbsp{{ total_likes }}
+                        
+                    {% else %}
+                        <button type="submit" name="post_id" style="border: none; background: none;" value="{{ post.id }}"><i class="far fa-thumbs-up fa-lg"></i></button>
+                        -&nbsp&nbsp{{ total_likes }}    
+                    {% endif %}
+                {% else %}
+                    <small>Please Login to Like &nbsp&nbsp<i class="far fa-thumbs-up fa-lg"></i>-&nbsp&nbsp{{ total_likes }}</small>
+                {% endif%}
+            </form>
+        </div>
+    </article>
+{% endblock %}
